@@ -36,7 +36,7 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                echo "Building Docker image: ${IMAGE_NAME}:${IMAGE_TAG}"
+                echo "Building Docker image ${IMAGE_NAME}:${IMAGE_TAG}"
                 dir('dosage-calculator') {
                     sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
                 }
