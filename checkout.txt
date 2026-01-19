@@ -1,0 +1,2 @@
+Checkout Price Calculation
+Final Price = amount + tax
