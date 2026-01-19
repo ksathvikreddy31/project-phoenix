@@ -9,36 +9,54 @@ pipeline {
         choice(
             name: 'ENV',
             choices: ['DEV', 'STAGE', 'PROD'],
-            description: 'Select target environment'
+            description: 'Target environment'
         )
     }
 
+    environment {
+        IMAGE_NAME = "phoenix-dosage"
+        IMAGE_TAG  = "${env.BUILD_NUMBER}"
+    }
+
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Build') {
+        stage('Gradle Build') {
             steps {
-                echo "Environment selected: ${params.ENV}"
-                echo "Commit: ${env.GIT_COMMIT}"
-                echo "Branch: ${env.GIT_BRANCH}"
-
                 dir('dosage-calculator') {
                     sh './gradlew build'
                 }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                echo "Building Docker image: ${IMAGE_NAME}:${IMAGE_TAG}"
+                dir('dosage-calculator') {
+                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                }
+            }
+        }
+
+        stage('Docker Image Info') {
+            steps {
+                sh "docker images | grep ${IMAGE_NAME}"
             }
         }
     }
 
     post {
         success {
-            echo 'Build completed successfully'
+            echo "Docker image built successfully"
         }
         failure {
-            echo 'Build failed'
+            echo "Pipeline failed"
         }
     }
 }
+
