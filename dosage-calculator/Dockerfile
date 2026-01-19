@@ -4,14 +4,14 @@ FROM eclipse-temurin:17-jdk
 # Set working directory
 WORKDIR /app
 
-# Copy Gradle wrapper and build files
+# Copy Gradle wrapper and config
 COPY gradlew gradlew
 COPY gradlew.bat gradlew.bat
 COPY gradle gradle
 COPY build.gradle settings.gradle ./
 
-# Download dependencies (cached layer)
-RUN chmod +x gradlew && ./gradlew dependencies
+# Fix line endings + permissions, then download deps
+RUN sed -i 's/\r$//' gradlew && chmod +x gradlew && ./gradlew dependencies
 
 # Copy source code
 COPY src src
@@ -21,3 +21,4 @@ RUN ./gradlew build
 
 # Default command
 CMD ["./gradlew", "test"]
+
