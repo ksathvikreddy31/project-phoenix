@@ -1,2 +1,4 @@
 Checkout Price Calculation
-Final Price = amount + tax
+Final Price = amount + tax - discount
+
+
