@@ -6,17 +6,17 @@ pipeline {
     }
 
     parameters {
-        choice(
-            name: 'ENV',
+        choice( 
+           name: 'ENV',
             choices: ['DEV', 'STAGE', 'PROD'],
             description: 'Target environment'
         )
     }
 
     environment {
-        IMAGE_NAME = "phoenix-dosage"
-        IMAGE_TAG  = "${env.BUILD_NUMBER}"
-    }
+    IMAGE_NAME = "ksathvikreddy31/phoenix-dosage"
+    IMAGE_TAG  = "${env.BUILD_NUMBER}"
+}
 
     stages {
 
@@ -60,3 +60,21 @@ pipeline {
     }
 }
 
+
+stage('Docker Login') {
+    steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'dockerhub-creds',
+            usernameVariable: 'DOCKER_USER',
+            passwordVariable: 'DOCKER_PASS'
+        )]) {
+            sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+        }
+    }
+}
+
+stage('Docker Push') {
+    steps {
+        sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+    }
+}
