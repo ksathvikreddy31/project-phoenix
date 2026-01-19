@@ -21,3 +21,8 @@ out/
 
 # Node (if ever used)
 node_modules/
+*.iml
+# Gradle
+.gradle/
+**/.gradle/
+.mvn/
